@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -71,6 +72,7 @@ func TestStaticFileServer(t *testing.T) {
 	mockServer := httptest.NewServer(r)
 
 	resp, err := http.Get(mockServer.URL + "/assets/")
+	log.Printf(mockServer.URL + "/assets/")
 	if err != nil {
 		t.Fatal(err)
 	}

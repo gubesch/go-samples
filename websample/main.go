@@ -13,7 +13,7 @@ func newRouter() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/hello", handler).Methods("GET")
 
-	staticFileDirectory := http.Dir("./assets")
+	staticFileDirectory := http.Dir("D:/PCDATA/Documents/go/src/github.com/gubesch/go-samples/websample/assets/")
 
 	staticFileHandler := http.StripPrefix("/assets/", http.FileServer(staticFileDirectory))
 
@@ -25,9 +25,7 @@ func newRouter() *mux.Router {
 
 
 func main() {
-	router := newRouter()
-
-	http.ListenAndServe(":8080", router)
+	http.ListenAndServe(":1337", newRouter())
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
