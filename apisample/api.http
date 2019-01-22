@@ -20,7 +20,7 @@ DELETE http://localhost:8000/service/1
 
 ###
 
-PUT http://localhost:8000/service/2
+PUT http://localhost:8000/service/4
 Content-Type: application/json
 
 {"brand":"husqvarna","model":"fichtenmoped","datejoined":"2019-01-21T20:50:47.6251781+01:00","owner":{"id":1,"firstname":"Anton","lastname":"Horvath"}}
