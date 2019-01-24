@@ -7,3 +7,4 @@ covered topics:
 * basic web-sample
 * api-sample
 * sql-sample
+* jwt-sample
