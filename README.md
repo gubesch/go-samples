@@ -2,7 +2,7 @@
 
 some golang trys
 
-covered topics
+covered topics:
 
 * basic web-sample
 * api-sample
