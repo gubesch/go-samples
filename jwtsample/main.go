@@ -6,9 +6,9 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
+	"github.com/gubesch/go-samples/jwtsample/middleware"
 	"log"
 	"net/http"
-	"strings"
 )
 
 type User struct {
@@ -20,9 +20,6 @@ type JwtToken struct {
 	Token string `json:"token"`
 }
 
-type Exception struct {
-	Message string `json:"message"`
-}
 
 func CreateTokenEndpoint(w http.ResponseWriter, req *http.Request) {
 
@@ -36,11 +33,12 @@ func CreateTokenEndpoint(w http.ResponseWriter, req *http.Request) {
 		"maikta": "akkuschrauber",
 		"Timestamp": "in 3 jahr",
 	})
+	//jwt-sample is the JWT secret this should be changed to a secure secret
 	tokenString, err := token.SignedString([]byte("JWT-Sample"))
 	if err != nil{
 		fmt.Println(err)
 	}
-	json.NewEncoder(w).Encode(JwtToken{Token:tokenString})
+	_=json.NewEncoder(w).Encode(JwtToken{Token:tokenString})
 }
 
 
@@ -48,9 +46,10 @@ func TestEndpoint(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	decoded := context.Get(r,"decoded")
 	fmt.Println(decoded)
+	//mapstructer is only needed if you want to parse the decode message into an object
 	//var user User
 	//mapstructure.Decode(decoded.(jwt.MapClaims), &user)
-	json.NewEncoder(w).Encode(decoded)
+	_=json.NewEncoder(w).Encode(decoded)
 }
 
 
@@ -58,47 +57,23 @@ func main(){
 	router := mux.NewRouter()
 	fmt.Printf("Starting web server")
 
+	//the router has an authentication route which is not behind a middleware
+
 	router.HandleFunc("/authenticate", CreateTokenEndpoint).Methods("POST")
+
+	//all other routes are behind a middleware
 	test:=router.PathPrefix("/test").Subrouter()
-	test.HandleFunc("/trick", TestEndpoint);
-	test.Use(ValidateMiddleware)
+	test.HandleFunc("/trick", TestEndpoint)
+	test.Use(middleware.ValidateMiddleware)
 
 
 	//router.Use(ValidateMiddleware)
 	log.Fatal(http.ListenAndServe(":9000", router))
 }
-type MiddlewareFunc func(http.Handler) http.Handler
-func ValidateMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		authorizationHeader := r.Header.Get("Authorization")
-		if authorizationHeader != "" {
-			bearerToken := strings.Split(authorizationHeader, " ")
-			if len(bearerToken) == 2 {
-				token, err := jwt.Parse(bearerToken[1], func(token *jwt.Token) (interface{}, error) {
-					if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-						return nil, fmt.Errorf("There was an error")
-					}
-					return []byte("JWT-Sample"), nil
-				})
-				if err != nil{
-					json.NewEncoder(w).Encode(Exception{Message:err.Error()})
-					return
-				}
-				if token.Valid {
-					context.Set(r,"decoded", token.Claims)
-					next.ServeHTTP(w,r)
-				} else {
-					json.NewEncoder(w).Encode(Exception{Message: "Invalid authorization token"})
-				}
-			} else {
-				json.NewEncoder(w).Encode(Exception{Message: "Invalid authorization token"})
-			}
-		} else {
-			json.NewEncoder(w).Encode(Exception{Message: "An authorization header is required"})
-		}
-	})
-}
+
+// create middleware function for routes behind middleware
+
+
 
 
 

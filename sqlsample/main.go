@@ -21,6 +21,9 @@ type Item struct {
 } 
 
 func newDb() sql.DB {
+
+	//function for createing a database connection
+
 	driver := "mysql"
 	username := "root"
 	password := ""
@@ -45,6 +48,9 @@ func main(){
 }
 
 func createTable(db sql.DB) error {
+
+	//Create create statements for user and item table
+
 	createUser:= `
 		CREATE TABLE IF NOT EXISTS user(
 			ID int NOT NULL auto_increment, 
@@ -61,6 +67,9 @@ func createTable(db sql.DB) error {
     		CONSTRAINT FK_UserTable
     		FOREIGN KEY (UserID) REFERENCES user(ID)
 		);`
+
+	//execute these commands on the database
+
 	_,err := db.Exec(createUser)
 	if err != nil{
 		return err
@@ -73,13 +82,14 @@ func createTable(db sql.DB) error {
 }
 
 func insertIntoTable(db sql.DB) error{
-
+	//create prepared statement for user table
 	stmtUser,err := db.Prepare("INSERT INTO `user` (`firstname`,`lastname`) VALUES (?, ?)")
 	defer stmtUser.Close()
 	if err != nil {
 		return err
 	}
 
+	//execute these prepared statements on the db
 	_,err = stmtUser.Exec("Anton", "Horvath")
 	if err != nil {
 		return err
@@ -117,6 +127,8 @@ func insertIntoTable(db sql.DB) error{
 
 }
 
+//function to truncate a table
+
 func truncateTable(db sql.DB) error {
 	_,err := db.Exec("TRUNCATE TABLE user;")
 	if err != nil {
@@ -126,22 +138,26 @@ func truncateTable(db sql.DB) error {
 }
 
 func selectTableData(db sql.DB) error {
+	//create select statement for user table
 	usersQuery, err := db.Query("SELECT * FROM `user`;")
 	defer usersQuery.Close()
 	if err != nil {
 		return nil
 	}
 
+	//foreach row from the statement above
 	for usersQuery.Next(){
 		var user User
 		err = usersQuery.Scan(&user.ID,&user.firstname,&user.lastname)
 		if err != nil{
 			return err
 		}
+		//create the query for the items belonging to specific user
 		itemQuery,err := db.Query("SELECT ID, Name, QualityLevel FROM item WHERE UserID = ?",user.ID)
 		if err != nil{
 			return err
 		}
+		//foreach item create the item object with the user object
 		for itemQuery.Next() {
 			var item Item
 			err = itemQuery.Scan(&item.ID,&item.Name,&item.QualityLevel)
