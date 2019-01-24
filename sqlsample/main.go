@@ -34,7 +34,7 @@ func newDb() sql.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return *database;
+	return *database
 }
 
 func main(){
