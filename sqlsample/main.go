@@ -22,7 +22,7 @@ type Item struct {
 
 func newDb() sql.DB {
 
-	//function for createing a database connection
+	//function for creating a database connection
 
 	driver := "mysql"
 	username := "root"
