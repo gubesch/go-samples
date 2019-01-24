@@ -28,6 +28,10 @@ func CreateTokenEndpoint(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var user User
 	_ = json.NewDecoder(req.Body).Decode(&user)
+
+	//in the next lines you can define the tokens values
+	//in my case username, makita, timestamp
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": user.Username,
 		"maikta": "akkuschrauber",
