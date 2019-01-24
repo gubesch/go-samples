@@ -1,9 +1,10 @@
 # go-samples
 
-some golang trys
+some golang samples
 
 covered topics:
 
 * basic web-sample
 * api-sample
-* sql-sample
+* mysql-sample
+* jwt-sample
