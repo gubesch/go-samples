@@ -10,16 +10,36 @@ func TestDBConnection(t *testing.T){
 	db:=newDb()
 	defer db.Close()
 
-	t.Run("CreateTable", func(t *testing.T) {
-		createTable(db)
+	t.Run("CreateTables", func(t *testing.T) {
+		err :=createTable(db)
+		if err != nil {
+			t.Errorf(err.Error())
+		}
 	})
 
+
 	
-	t.Run("InsertIntoTable", func(t *testing.T) {
-		insertIntoTable(db)
+	t.Run("InsertIntoTables", func(t *testing.T) {
+		err := insertIntoTable(db)
+		if err != nil {
+			t.Errorf(err.Error())
+		}
 	})
-	
-	//drop table
+
+	t.Run("SelectFromTables", func(t *testing.T) {
+		err := selectTableData(db)
+		if err != nil{
+			t.Errorf(err.Error())
+		}
+	})
+	/*
+	t.Run("TruncateTable", func(t *testing.T) {
+		err := truncateTable(db)
+		if err != nil {
+			t.Errorf(err.Error())
+		}
+	})*/
+
 
 }
 
